@@ -3,9 +3,33 @@ from unittest import result
 
 class Aeroplane:
     def __init__(self, callsign = None,country = None, velocity = None,altitude =None ):
+        if not isinstance(callsign, str):
+            raise ValueError("callsign должен быть строкой")
+        if not callsign.strip() or callsign is None:
+            callsign = "None callsign"
         self.callsign = callsign
+
+        if not isinstance(country, str):
+            raise ValueError("country должен быть строкой")
+        if not country.strip() or country is None:
+            country = "None callsign"
         self.country = country
+
+        if velocity is None:
+            velocity = 0
+        if not isinstance(velocity, (int, float)) or velocity < 0:
+            raise ValueError(f'velocity должен быть числом, а не {type(velocity).__name__}')
+        elif velocity < 0:
+            raise ValueError("velocity должен быть неотрицательным числом")
         self.velocity = velocity
+
+        if altitude is None:
+            altitude = 0
+        if not isinstance(altitude, (int, float)):
+            raise ValueError(f"altitude должен быть числом, а не {type(altitude).__name__}")
+        # В данных opensky-network.org бывает отрицательня высота, выравниваем ее в 0
+        if altitude < 0:
+            altitude = 0
         self.altitude = altitude
 
     @classmethod
@@ -22,12 +46,16 @@ class Aeroplane:
 
     def __eq__(self, other):
         """Равенство объектов (сравнение самолетов между собой по скорости и высоте)"""
+        if not isinstance(other, Aeroplane):
+            raise TypeError
         if self.velocity == other.velocity and self.altitude == other.altitude:
             return True
         return False
 
     def __gt__(self, other):
         """Больше (сравнение самолетов между собой по скорости и высоте)"""
+        if not isinstance(other, Aeroplane):
+            raise TypeError
         if self.velocity > other.velocity:
             return True
         if self.altitude > other.altitude:
@@ -36,6 +64,8 @@ class Aeroplane:
 
     def __lt__(self, other):
         """Меньше (сравнение самолетов между собой по скорости и высоте)"""
+        if not isinstance(other, Aeroplane):
+            raise TypeError
         if self.velocity < other.velocity:
             return True
         if self.altitude < other.altitude:
