@@ -1,0 +1,49 @@
+import json
+import os
+
+from src.aircraft_data_handler import Aeroplane
+
+root_path = os.path.dirname(os.path.abspath(__file__))
+data_path = os.path.abspath(os.path.join(root_path, "..", "data/data_aeroplanes.json"))
+
+class JSONSaver:
+    def __init__(self):
+        self.data_path = data_path
+    def add_aeroplane(self, aeroplane: "list[Aeroplane] | Aeroplane"):
+        # Чтение переданных данных
+        data = []
+        if not isinstance(aeroplane, list):
+            data=[{"callsign": aeroplane.callsign, "country": aeroplane.country,"velocity": aeroplane.velocity,"altitude": aeroplane.altitude}]
+        if isinstance(aeroplane, list):
+            for one_aeroplane in aeroplane:
+                data_aeroplane = {"callsign": one_aeroplane.callsign, "country": one_aeroplane.country,"velocity": one_aeroplane.velocity,"altitude": one_aeroplane.altitude}
+                data.append(data_aeroplane)
+        # Работа с файлом
+        if os.path.isfile(self.data_path):
+            #Получаем данные из файла
+            try:
+                with open(self.data_path, "r", encoding="utf-8") as f:
+                    data_file = json.load(f)
+                    if not isinstance(data_file, list):
+                        data_file = []
+            except (json.JSONDecodeError, IOError):
+                data_file = []
+            # собираем все ключи из файла(принимаем, что дублей с сервиса API не приходит)
+            key = set()
+            for item_file in data_file:
+                key.add(item_file["callsign"])
+            # сверяем уникальные ключи записанных данных
+            for item in data:
+                if item.get("callsign") is not None and item.get("callsign") not in key:
+                    key.add(item["callsign"])
+                    data_file.append(item)
+            # Перезаписываем файл без дублей
+            with open(self.data_path, "w", encoding="utf-8") as f:
+                json.dump(data_file, f, ensure_ascii=False, indent=4)
+        else:
+            # Файла нет - создаем новый
+            with open(self.data_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=4)
+
+    def delete_aeroplane(self):
+        pass
