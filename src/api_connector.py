@@ -64,7 +64,7 @@ class ApiAeroplanesCounty(BaseApiClient):
             print("Тело ответа:", response.text)
             return None
         else:
-            self.aeroplanes = response.json()['states']
+            self.aeroplanes = response.json()["states"]
             return self.aeroplanes
 
 

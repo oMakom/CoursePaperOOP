@@ -2,7 +2,7 @@ from unittest import result
 
 
 class Aeroplane:
-    def __init__(self, callsign = None,country = None, velocity = None,altitude =None ):
+    def __init__(self, callsign=None, country=None, velocity=None, altitude=None):
         if not isinstance(callsign, str):
             raise ValueError("callsign должен быть строкой")
         if not callsign.strip() or callsign is None:
@@ -18,7 +18,7 @@ class Aeroplane:
         if velocity is None:
             velocity = 0
         if not isinstance(velocity, (int, float)) or velocity < 0:
-            raise ValueError(f'velocity должен быть числом, а не {type(velocity).__name__}')
+            raise ValueError(f"velocity должен быть числом, а не {type(velocity).__name__}")
         elif velocity < 0:
             raise ValueError("velocity должен быть неотрицательным числом")
         self.velocity = velocity
@@ -36,7 +36,7 @@ class Aeroplane:
     def cast_to_object_list(cls, country_aeroplanes: list[list]):
         aeroplane_list = []
         for aeroplane in country_aeroplanes:
-            callsign = aeroplane[1].strip() # удаляем пробелы(с сервиса всегда идет 8 символов, добивают пробелами)
+            callsign = aeroplane[1].strip()  # удаляем пробелы(с сервиса всегда идет 8 символов, добивают пробелами)
             country = aeroplane[2]
             velocity = aeroplane[9]
             altitude = aeroplane[7]
