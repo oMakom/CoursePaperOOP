@@ -36,7 +36,7 @@ class Aeroplane:
     def cast_to_object_list(cls, country_aeroplanes: list[list]):
         aeroplane_list = []
         for aeroplane in country_aeroplanes:
-            callsign = aeroplane[1]
+            callsign = aeroplane[1].strip() # удаляем пробелы(с сервиса всегда идет 8 символов, добивают пробелами)
             country = aeroplane[2]
             velocity = aeroplane[9]
             altitude = aeroplane[7]
