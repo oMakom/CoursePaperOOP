@@ -48,7 +48,7 @@ class JSONSaver(BaseSaver):
                 data.append(data_aeroplane)
         return data
 
-    def reaf_data_file(self):
+    def reaf_data_file(self) -> list[dict] | None:
         """Читает данные из файла "../data/data_aeroplanes.json", если ошибка чтения, то на выходе пустой список"""
         try:
             with open(self.__data_path, "r", encoding="utf-8") as f:
@@ -59,12 +59,12 @@ class JSONSaver(BaseSaver):
             data_f = []
         return data_f
 
-    def write_to_json(self, data_list: list):
+    def write_to_json(self, data_list: list) -> None:
         """Записывает данные в файл "../data/data_aeroplanes.json" """
         with open(self.__data_path, "w", encoding="utf-8") as f:
             json.dump(data_list, f, ensure_ascii=False, indent=4)
 
-    def add_aeroplane(self, aeroplane: "list[Aeroplane] | Aeroplane"):
+    def add_aeroplane(self, aeroplane: "list[Aeroplane] | Aeroplane") -> None:
         """класс для сохранения информации о самолетах в JSON-файл"""
         # Чтение переданных данных
         data = JSONSaver.obj_to_list(aeroplane)
@@ -84,11 +84,8 @@ class JSONSaver(BaseSaver):
             # Перезаписываем файл без дублей
             JSONSaver.write_to_json(self, data_file)
         else:
-            # Файла нет - создаем новый
+            # Файла нет - создаем новый c проверкой дублей
             date_new = []
-            # собираем все ключи
-            for item_file in data:
-                key.add(item_file["callsign"])
             for item in data:
                 if item.get("callsign") is not None and item.get("callsign") not in key:
                     key.add(item["callsign"])
@@ -96,12 +93,15 @@ class JSONSaver(BaseSaver):
             # Перезаписываем файл без дублей
             JSONSaver.write_to_json(self, date_new)
 
-    def delete_aeroplane(self, criteria: str):
-        """удвляет данные из файла по позывному"""
+    def delete_aeroplane(self, criteria: str) -> None:
+        """удаляет данные из файла по позывному"""
         # Получаем данные из файла
         data_file = JSONSaver.reaf_data_file(self)
-        date_new = []
-        for item in data_file:
-            if item.get("callsign") != criteria:
-                date_new.append(item)
-        JSONSaver.write_to_json(self, date_new)
+        if data_file is None:
+            return None
+        else:
+            date_new = []
+            for item in data_file:
+                if item.get("callsign") != criteria:
+                    date_new.append(item)
+            JSONSaver.write_to_json(self, date_new)
