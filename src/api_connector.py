@@ -18,6 +18,7 @@ class ApiCountyCoordinates(BaseApiClient):
         self.geo_coordinates = None
 
     def get_coordinates(self, country: str) -> None:
+        """Получает координаты страны(прямоугольник) из API openstreetmap указанной страны"""
         headers = {
             "User-Agent": "test-app/1.0",
         }
@@ -47,7 +48,8 @@ class ApiAeroplanesCounty(BaseApiClient):
         super().__init__(base_url="https://opensky-network.org/api/states/all")
         self.aeroplanes = None
 
-    def get_aeroplanes(self, geo_coordinates: list) -> None | list[list]:
+    def get_aeroplanes(self, geo_coordinates: list) -> None | list:
+        """Получает список самолетов нахадящихся в пределах указанных координат по API opensky-network.org"""
         if len(geo_coordinates) != 4:
             print("geo_coordinates должен содержать 4 значения: [lamin, lamax, lomin, lomax]")
             return None
@@ -61,7 +63,7 @@ class ApiAeroplanesCounty(BaseApiClient):
         response = get(url=self.base_url, params=params)
         if not response.ok:  # ok == True только для 200–399
             print("Ошибка:", response.status_code, response.reason)
-            print("Тело ответа:", response.text)
+            print("Ответ:", response.text)
             return None
         else:
             self.aeroplanes = response.json()["states"]
