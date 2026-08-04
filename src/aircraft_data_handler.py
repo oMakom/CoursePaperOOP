@@ -1,6 +1,3 @@
-from unittest import result
-
-
 class Aeroplane:
     def __init__(self, callsign=None, country=None, velocity=None, altitude=None):
         """
@@ -32,7 +29,7 @@ class Aeroplane:
             raise ValueError(f"velocity должен быть числом, а не {type(velocity).__name__}")
         elif velocity < 0:
             raise ValueError("velocity должен быть неотрицательным числом")
-        self.velocity = velocity
+        self.velocity = float(velocity)
 
         if altitude is None:
             altitude = 0
@@ -48,41 +45,39 @@ class Aeroplane:
         """Создает из списка словарей списоб объектов Aeroplane"""
         aeroplane_list = []
         for aeroplane in country_aeroplanes:
-            callsign = aeroplane[1].strip()  # удаляем пробелы(с сервиса всегда идет 8 символов, добивают пробелами)
+            callsign = aeroplane[1]
             country = aeroplane[2]
             velocity = aeroplane[9]
             altitude = aeroplane[7]
-            single_aeroplane = Aeroplane(callsign, country, velocity, altitude)
+            # удаляем лишние пробелы и приводем к строке
+            callsign_str = str(callsign).strip() if callsign is not None else ""
+            country_str = str(country).strip() if country is not None else ""
+
+            single_aeroplane = cls(callsign_str, country_str, velocity, altitude)
             aeroplane_list.append(single_aeroplane)
         return aeroplane_list
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Равенство объектов (сравнение самолетов между собой по скорости и высоте)"""
         if not isinstance(other, Aeroplane):
             raise TypeError
-        if self.velocity == other.velocity and self.altitude == other.altitude:
-            return True
-        return False
+        return self.velocity == other.velocity and self.altitude == other.altitude
 
-    def __gt__(self, other):
+    def __gt__(self, other: object) -> bool:
         """Больше (сравнение самолетов между собой по скорости и высоте)"""
         if not isinstance(other, Aeroplane):
             raise TypeError
-        if self.velocity > other.velocity:
-            return True
-        if self.altitude > other.altitude:
-            return True
-        return False
+        if self.velocity != other.velocity:
+            return self.velocity > other.velocity
+        return self.altitude > other.altitude
 
-    def __lt__(self, other):
+    def __lt__(self, other: object) -> bool:
         """Меньше (сравнение самолетов между собой по скорости и высоте)"""
         if not isinstance(other, Aeroplane):
             raise TypeError
-        if self.velocity < other.velocity:
-            return True
-        if self.altitude < other.altitude:
-            return True
-        return False
+        if self.velocity != other.velocity:
+            return self.velocity < other.velocity
+        return self.altitude < other.altitude
 
     def __str__(self) -> str:
         """Для отображение информации о самолете в строковом виде"""
