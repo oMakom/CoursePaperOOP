@@ -1,23 +1,29 @@
 from abc import ABC, abstractmethod
 
+import requests
 from requests import get
 
 
 class BaseApiClient(ABC):
-    @abstractmethod
+    """Базовый абстрактный класс для API-клиентов."""
+
     def __init__(self, base_url: str) -> None:
         self.base_url = base_url
 
+    @abstractmethod
+    def fetch_data(self, *args, **kwargs) -> None | list:
+        """Абстрактный метод для получения и обработки данных."""
+        pass
 
-class ApiCountyCoordinates(BaseApiClient):
+
+class ApiCountryCoordinates(BaseApiClient):
     """Класс для получения координат страны с 'https://nominatim.openstreetmap.org/search' в виде
     списка из 4х 'координат'"""
 
     def __init__(self) -> None:
         super().__init__(base_url="https://nominatim.openstreetmap.org/search")
-        self.geo_coordinates = None
 
-    def get_coordinates(self, country: str) -> None:
+    def fetch_data(self, country: str) -> None | list:
         """Получает координаты страны(прямоугольник) из API openstreetmap указанной страны"""
         headers = {
             "User-Agent": "test-app/1.0",
@@ -28,27 +34,30 @@ class ApiCountyCoordinates(BaseApiClient):
             "format": "json",
             "limit": 1,
         }
-
-        response = get(url=self.base_url, params=params, headers=headers)
-        if not response.ok:  # ok == True только для 200–399
-            print("Ошибка:", response.status_code, response.reason)
-            print("Тело ответа:", response.text)
+        try:
+            response = get(url=self.base_url, params=params, headers=headers, timeout=10)
+            response.raise_for_status()
+        except requests.RequestException as e:
+            print(f"Ошибка запроса к Nominatim: {e}")
             return None
-        else:
-            data_country = response.json()
-            self.geo_coordinates = data_country[0].get("boundingbox")
-            return self.geo_coordinates
+        data_country = response.json()
+        if not data_country:
+            print("Страна не найдена.")
+            return []
+        geo_coordinates = data_country[0].get("boundingbox")
+        if geo_coordinates is None:
+            return []
+        return geo_coordinates
 
 
-class ApiAeroplanesCounty(BaseApiClient):
+class ApiAeroplanesCountry(BaseApiClient):
     """Класс для получения списка самолетов с 'https://nominatim.openstreetmap.org/search'
     в пределах страны в виде словаря"""
 
     def __init__(self) -> None:
         super().__init__(base_url="https://opensky-network.org/api/states/all")
-        self.aeroplanes = None
 
-    def get_aeroplanes(self, geo_coordinates: list) -> None | list:
+    def fetch_data(self, geo_coordinates: list) -> None | list[dict]:
         """Получает список самолетов нахадящихся в пределах указанных координат по API opensky-network.org"""
         if len(geo_coordinates) != 4:
             print("geo_coordinates должен содержать 4 значения: [lamin, lamax, lomin, lomax]")
@@ -59,20 +68,11 @@ class ApiAeroplanesCounty(BaseApiClient):
             "lomin": geo_coordinates[2],
             "lomax": geo_coordinates[3],
         }
-
-        response = get(url=self.base_url, params=params)
-        if not response.ok:  # ok == True только для 200–399
-            print("Ошибка:", response.status_code, response.reason)
-            print("Ответ:", response.text)
+        try:
+            response = get(url=self.base_url, params=params, timeout=10)
+            response.raise_for_status()
+        except requests.RequestException as e:
+            print(f"Ошибка запроса к OpenSky: {e}")
             return None
-        else:
-            self.aeroplanes = response.json()["states"]
-            return self.aeroplanes
-
-
-if __name__ == "__main__":
-    api = ApiCountyCoordinates()
-    api.get_coordinates("RUSSIA")
-    api_Aeroplanes = ApiAeroplanesCounty()
-    api_Aeroplanes.get_aeroplanes(api.geo_coordinates)
-    print(api_Aeroplanes.aeroplanes)
+        aeroplanes = response.json()["states"]
+        return aeroplanes
