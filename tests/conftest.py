@@ -1,4 +1,9 @@
+import os
+import tempfile
+
 import pytest
+
+from src.aircraft_data_handler import Aeroplane
 
 
 @pytest.fixture
@@ -23,3 +28,23 @@ def raw_open_sky_row():
         False,  # 15: spi
         0,  # 16: position_source
     ]
+
+
+@pytest.fixture
+def plane_a():
+    return Aeroplane(callsign="SWR438A", country="Switzerland", velocity=250.0, altitude=10000)
+
+
+@pytest.fixture
+def plane_b():
+    return Aeroplane(callsign="LH123", country="Germany", velocity=270.0, altitude=11000)
+
+
+@pytest.fixture
+def tmp_json_path():
+    with tempfile.NamedTemporaryFile(mode="w+", suffix=".json", delete=False) as f:
+        path = f.name
+    yield path
+    # очистка после теста
+    if os.path.exists(path):
+        os.remove(path)
