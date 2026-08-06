@@ -202,7 +202,6 @@ def test_print_aeroplane():
     )
 
     assert (
-        str(plane)
-        == f"Aeroplane(callsign={plane.callsign!r}, country={plane.country!r},"
-           f" velocity={plane.velocity}, altitude={plane.altitude})"
+        str(plane) == f"Aeroplane(callsign={plane.callsign!r}, country={plane.country!r},"
+        f" velocity={plane.velocity}, altitude={plane.altitude})"
     )
