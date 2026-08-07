@@ -1,17 +1,18 @@
 import pandas as pd
 
-
 from src.aircraft_data_handler import Aeroplane
-from src.api_connector import ApiCountyCoordinates, ApiAeroplanesCounty
+from src.api_connector import ApiAeroplanesCountry, ApiCountryCoordinates
 from src.json_saver import JSONSaver
 
 
 def get_aeroplanes_by_country(country: str):
     """Получает данные по API по кориднатам страны"""
-    api_county = ApiCountyCoordinates()
-    geo_coord = api_county.get_coordinates(country)
-    api_aeroplanes = ApiAeroplanesCounty()
-    aeroplanes_list = api_aeroplanes.get_aeroplanes(geo_coord)
+    api_county = ApiCountryCoordinates()
+    geo_coord = api_county.fetch_data(country.upper())
+    if geo_coord == []:
+        return geo_coord
+    api_aeroplanes = ApiAeroplanesCountry()
+    aeroplanes_list = api_aeroplanes.fetch_data(geo_coord)
     aeroplanes_obj = Aeroplane.cast_to_object_list(aeroplanes_list)
     aeroplanes = JSONSaver.obj_to_list(aeroplanes_obj)
     return aeroplanes
@@ -20,8 +21,12 @@ def get_aeroplanes_by_country(country: str):
 # фильтрация по стране регистрации
 def filter_aeroplanes(aeroplanes: list[dict], filter_words: list[str]) -> list[dict]:
     """Оставляет список самолетов только по указанным странам регистрации"""
+    if filter_words == [""] or (not filter_words):
+        print("Данные стрны/стран для фильтрации не введены. Фильтрация по стране пропущена")
+        filtered_aeroplanes = aeroplanes
+        return filtered_aeroplanes
     df = pd.DataFrame(aeroplanes)
-    filter_words_no_space = [country.strip() for country in filter_words]
+    filter_words_no_space = [country.title().strip() for country in filter_words]
     df_sort_country_reg = df.loc[df.country.isin(filter_words_no_space)]
     df_dict = df_sort_country_reg.to_dict(orient="records")
     return df_dict
