@@ -35,7 +35,7 @@ json_saver.delete_aeroplane("DMFEY")
 # Функция для взаимодействия с пользователем
 
 
-def user_interaction():
+def user_interaction() -> None:
     while True:
         country = input("Введите название страны (пример ввода: RUSSIA): ")  # Например RUSSIA
         if country:

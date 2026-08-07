@@ -1,5 +1,14 @@
+from typing import Any
+
+
 class Aeroplane:
-    def __init__(self, callsign=None, country=None, velocity=None, altitude=None):
+    def __init__(
+        self,
+        callsign: str | None = None,
+        country: str | None = None,
+        velocity: float | None = None,
+        altitude: float | None = None,
+    ):
         """
         Класс, представляющий самолёт по данным OpenSky Network.
 
@@ -42,7 +51,7 @@ class Aeroplane:
 
     @classmethod
     def cast_to_object_list(cls, country_aeroplanes: list[dict]) -> list[Aeroplane]:
-        """Создает из списка словарей списоб объектов Aeroplane"""
+        """Создает из списка словарей список объектов Aeroplane"""
         aeroplane_list = []
         for aeroplane in country_aeroplanes:
             callsign = aeroplane[1]
@@ -63,7 +72,7 @@ class Aeroplane:
             raise TypeError
         return self.velocity == other.velocity and self.altitude == other.altitude
 
-    def __gt__(self, other: object) -> bool:
+    def __gt__(self, other: object) -> Any | bool:
         """Больше (сравнение самолетов между собой по скорости и высоте)"""
         if not isinstance(other, Aeroplane):
             raise TypeError
@@ -71,7 +80,7 @@ class Aeroplane:
             return self.velocity > other.velocity
         return self.altitude > other.altitude
 
-    def __lt__(self, other: object) -> bool:
+    def __lt__(self, other: object) -> Any | bool:
         """Меньше (сравнение самолетов между собой по скорости и высоте)"""
         if not isinstance(other, Aeroplane):
             raise TypeError

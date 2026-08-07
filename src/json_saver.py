@@ -70,7 +70,7 @@ class JSONSaver(BaseSaver):
             json.dump(data_list, f, ensure_ascii=False, indent=4)
 
     def add_aeroplane(self, aeroplane: list[Aeroplane] | Aeroplane) -> None:
-        """класс для сохранения информации о самолетах в JSON-файл"""
+        """метод для сохранения/добавления информации о самолетах в JSON-файл"""
         # Чтение переданных данных
         data = self.obj_to_list(aeroplane)
         # Работа с файлом

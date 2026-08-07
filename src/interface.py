@@ -5,7 +5,7 @@ from src.api_connector import ApiAeroplanesCountry, ApiCountryCoordinates
 from src.json_saver import JSONSaver
 
 
-def get_aeroplanes_by_country(country: str):
+def get_aeroplanes_by_country(country: str) -> list:
     """Получает данные по API по кориднатам страны"""
     api_county = ApiCountryCoordinates()
     geo_coord = api_county.fetch_data(country.upper())
@@ -33,7 +33,7 @@ def filter_aeroplanes(aeroplanes: list[dict], filter_words: list[str]) -> list[d
 
 
 # фильтрация по диапазону высот полета
-def get_aeroplanes_by_altitude(aeroplanes: list[dict], altitude_range) -> list[dict]:
+def get_aeroplanes_by_altitude(aeroplanes: list[dict], altitude_range: str) -> list[dict]:
     """Выбирает из списка самолеты в пределах указанной высоты"""
     df = pd.DataFrame(aeroplanes)
     range_list = altitude_range.split("-")
@@ -52,7 +52,7 @@ def sort_aeroplanes(aeroplanes: list[dict]) -> list[dict]:
 
 
 # получение топ N самолетов
-def get_top_aeroplanes(aeroplanes: list[dict], top_n: int) -> list[dict]:
+def get_top_aeroplanes(aeroplanes: list[dict], top_n: str) -> list[dict]:
     """Оставляет только перые top_n самолетов из списка"""
     result = []
     number = 0

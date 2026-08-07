@@ -1,8 +1,13 @@
 from unittest.mock import patch
 
 from src.api_connector import ApiCountryCoordinates
-from src.interface import filter_aeroplanes, get_aeroplanes_by_altitude, sort_aeroplanes, get_top_aeroplanes, \
-    print_all_aeroplanes, get_aeroplanes_by_country
+from src.interface import (
+    filter_aeroplanes,
+    get_aeroplanes_by_country,
+    get_top_aeroplanes,
+    print_all_aeroplanes,
+    sort_aeroplanes,
+)
 
 
 def test_filter_aeroplanes():
@@ -39,10 +44,12 @@ def test_sort_and_top():
     assert top_2[0]["altitude"] == 300
     assert top_2[1]["altitude"] == 200
 
+
 @patch.object(ApiCountryCoordinates, "fetch_data", return_value=[])
 def test_get_aeroplanes_by_country_no_coords(mock_api_coords):
     result = get_aeroplanes_by_country("UnknownCountry")
     assert result == []
+
 
 def test_print_all_aeroplanes(capsys):
     data = [
