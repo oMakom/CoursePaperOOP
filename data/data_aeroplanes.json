@@ -1,0 +1,14 @@
+[
+    {
+        "callsign": "N406Z",
+        "country": "United States",
+        "velocity": 42.26,
+        "altitude": 381
+    },
+    {
+        "callsign": "N759PA",
+        "country": "United States",
+        "velocity": 43.8,
+        "altitude": 1333.5
+    }
+]
